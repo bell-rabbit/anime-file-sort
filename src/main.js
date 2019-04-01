@@ -6,14 +6,26 @@ import router from './router'
 import Vuetify from 'vuetify'
 import 'vuetify/dist/vuetify.min.css'
 
-Vue.config.productionTip = false
-Vue.use(Vuetify)
+
+import global from './global';
+
+global.install = function () {
+  Object.defineProperty(Vue.prototype, '$g', {
+    get () {
+      return global
+    }
+  })
+};
+
+Vue.use(global);
+Vue.config.productionTip = false;
+Vue.use(Vuetify);
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
   router,
   components: { App },
   template: '<App/>',
-})
+});
 
 

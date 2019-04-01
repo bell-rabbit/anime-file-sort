@@ -73,7 +73,6 @@
         },
       methods: {
         dialog(name){
-          console.log(name);
           this.dialogName  = name;
           this.showDialog = true;
         },
@@ -84,21 +83,25 @@
               this.file.push(sourceFileElement);
             }
           }
-        }
-      },
-      beforeCreate() {
+        },
+        load(){
           let _this = this;
           fetch("http://127.0.0.1:3000/list").then(
             function(response) {
               return response.json();
             }
           ).then((json)=> {
-            console.log(json);
             _this.sourceFile = json;
-            console.log(_this.sourceFile);
-            this.filter();
+            _this.filter();
           });
+        }
+      },
+        beforeCreate() {
+
         }, created() {
+          let _this = this;
+          this.$g.load = function(){_this.load()};
+          this.load();
         }, beforeMount() {
         }, mounted() {
         }, beforeUpdate() {
@@ -106,7 +109,6 @@
         }, render() {},
           watch:{
             searchText(d){
-              console.log(d);
               this.filter();
             }
           }

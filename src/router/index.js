@@ -4,9 +4,10 @@ import HelloWorld from '@/components/HelloWorld'
 import index from '../page/index.vue'
 import 'vuetify/dist/vuetify.min.css'
 
-Vue.use(Router)
+Vue.use(Router);
 
 export default new Router({
+  mode: 'history',
   routes: [
     {
       path: '/',

@@ -1,4 +1,5 @@
 <template>
+  <div>
     <v-toolbar
       style="position: fixed;"
       fixed
@@ -21,13 +22,17 @@
       ></v-text-field>
       <v-spacer></v-spacer>
 
-      <v-btn icon>
+      <v-btn icon @click="openAddDialog()">
         <v-icon>add</v-icon>
       </v-btn>
 
-      <v-btn icon>
+      <v-btn icon @click="run()">
         <v-icon>play_arrow</v-icon>
       </v-btn>
+
+
+
+
 
 <!--      <v-btn icon>-->
 <!--        <v-icon>favorite</v-icon>-->
@@ -44,6 +49,44 @@
 <!--    >-->
 <!--      <v-container style="height: 1000px;"></v-container>-->
 <!--    </div>-->
+    <v-dialog
+      v-model="addDialog"
+      width="500"
+    >
+    <v-card>
+      <v-card-title class="headline teal lighten-3 white--text" primary-title >
+        Add
+      </v-card-title>
+
+      <v-card-text>
+        <v-text-field
+          label="Folder Name"
+          v-model="folderName"
+        ></v-text-field>
+      </v-card-text>
+
+      <v-divider></v-divider>
+
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn
+          color="primary"
+          flat
+          @click="dialog = false"
+        >
+          cancel
+        </v-btn>
+        <v-btn
+          color="primary"
+          flat
+          @click="addFolder()"
+        >
+          Add
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+    </v-dialog>
+  </div>
 </template>
 
 <script>
@@ -53,11 +96,39 @@
     name: 'app-nav',
     data() {
       return {
-        text:""
+        text:"",
+        addDialog:false,
+        folderName:""
       }
     }, methods: {
+      openAddDialog(){
+        this.addDialog = true;
+        this.folderName = "";
+      },
+      addFolder(){
+        if (this.folderName && this.folderName !== ""){
+        fetch("http://127.0.0.1:3000/add/folder?name=" + this.folderName).then(response => response.json()).
+        then((json)=> {
+          if(json.status === "success"){
+            this.$g.load();
+          }else{
+            alert("fail!");
+          }
+          this.addDialog = false;
+        });
+        }
+      },
+      run(){
+          fetch(this.$g.hostName + "/start").then(response => response.json()).
+          then((json)=> {
+            if(json.status === "success"){
+              alert("success!");
+            }else{
+               alert("fail!");
+            }
+          });
+      },
       keyup(){
-        console.log(this.text);
         this.$emit('update:search', this.text)
       }
     }, beforeCreate() {

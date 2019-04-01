@@ -1,7 +1,9 @@
 <template>
   <div id="app">
-    <app-nav :search.sync="searchText"></app-nav>
-    <router-view :search-text.sync="searchText"/>
+    <v-app>
+      <app-nav :search.sync="searchText"></app-nav>
+      <router-view :search-text.sync="searchText"/>
+    </v-app>
   </div>
 </template>
 
@@ -13,11 +15,6 @@
     data(){
       return{
       searchText:""
-      }
-    },
-    watch:{
-      searchText(d){
-        console.log(d);
       }
     }
   }

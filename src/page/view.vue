@@ -81,7 +81,6 @@
           let _this = this;
           fetch("http://127.0.0.1:3000/remove?name=" + this.name + "&text=" + data).then(function(response) {return response.json();})
             .then((json)=> {
-              console.log(json);
               _this.file = json.file;
               _this.condition = json.condition;
               _this.lock = true;
@@ -98,7 +97,6 @@
         watch:{
           name(data){
             let  _this = this;
-            console.log(this.name);
             fetch("http://127.0.0.1:3000/get?name=" + this.name).then(function(response) {return response.json();})
               .then((json)=> {
               console.log(json);
@@ -115,7 +113,6 @@
             let _this = this;
             fetch("http://127.0.0.1:3000/add?name=" + this.name + "&text=" + newData[newData.length - 1]).then(function(response) {return response.json();})
               .then((json)=> {
-                console.log(json);
                 _this.file = json.file;
                 _this.condition = json.condition;
                 _this.lock = true;

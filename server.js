@@ -11,11 +11,10 @@ function getFile(query) {
       if (fs.existsSync(sourcePath + "\\" + query.name)) {
         fileList = fileList.concat(fs.readdirSync(sourcePath + "\\" + query.name))
       }
-      ;
     }
   }
 
-  let db = {}
+  let db = {};
   if (fs.existsSync(".\\db.json")) {
     db = JSON.parse(fs.readFileSync(".\\db.json", 'utf8'));
   }
@@ -83,6 +82,49 @@ requestHandler = (request, response) => {
     case "/build/build.js":
       json  = fs.readFileSync("./build/build.js",'utf8');
       break;
+    case "/add/folder":
+        if (query.name !== undefined){
+          if (!fs.existsSync(sourcePathList[1] + "\\" + query.name)){
+            fs.mkdirSync(sourcePathList[1] + "\\" + query.name);
+          }
+        }
+      json = JSON.stringify({"status":"success"});
+      break;
+    case "/start":
+      db = JSON.parse(fs.readFileSync(".\\db.json", 'utf8'));
+
+      for (let sourcePath of sourcePathList) {
+        let fileList = fs.readdirSync(sourcePath);
+        let extensionRegExp = RegExp(/\./);
+
+        for (let file of fileList) {
+          if (extensionRegExp.exec(file.toString())) {
+            for (let dbKey in db) {
+              if (!db.hasOwnProperty(dbKey)){
+                continue;
+              }
+
+              let stringList = db[dbKey];
+              for (let stringListKey in stringList) {
+                if (!stringList.hasOwnProperty(stringListKey)){
+                  continue;
+                }
+                if(file.includes(stringList[stringListKey])){
+
+                  if (!fs.existsSync(sourcePath + "\\" + dbKey)){
+                    fs.mkdirSync(sourcePath + "\\" + dbKey);
+                  }
+
+                  fs.renameSync(sourcePath + "\\" + file,sourcePath + "\\" + dbKey+ "\\" + file );
+                }
+              }
+            }
+          }
+        }
+
+        json = JSON.stringify({"status":"success"});
+      }
+      break;
     case "/":
       json  = fs.readFileSync("./dist/index.html",'utf8');
         break;
@@ -95,7 +137,7 @@ requestHandler = (request, response) => {
   response.setHeader('Access-Control-Allow-Origin', '*');
   response.writeHead(200, {"Content-Type": "text/html; charset=utf-8"});
   response.end(json);
-}
+};
 
 
 const server = http.createServer(requestHandler);
