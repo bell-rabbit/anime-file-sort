@@ -107,7 +107,7 @@
       },
       addFolder(){
         if (this.folderName && this.folderName !== ""){
-        fetch("http://127.0.0.1:3000/add/folder?name=" + this.folderName).then(response => response.json()).
+        fetch(this.$g.hostName + "/add/folder?name=" + this.folderName).then(response => response.json()).
         then((json)=> {
           if(json.status === "success"){
             this.$g.load();

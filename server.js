@@ -2,6 +2,7 @@ const http = require("http");
 const sourcePathList = ["M:\\新番", "M:\\整理庫"];
 const fs = require('fs');
 const path = require('path');
+const exec = require('child_process');
 
 const querystring = require('querystring');
 
@@ -149,8 +150,9 @@ requestHandler = (request, response) => {
   response.end(json);
 };
 
-
 const server = http.createServer(requestHandler);
 
 server.listen(3000);
-console.log("start in http://127.0.0.1:3000/");
+console.log("start in " + "http://127.0.0.1:3000");
+
+exec.exec('start "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe" http://127.0.0.1:3000/');

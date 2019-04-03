@@ -86,7 +86,7 @@
         },
         load(){
           let _this = this;
-          fetch("http://127.0.0.1:3000/list").then(
+          fetch(this.$g.hostName + "/list").then(
             function(response) {
               return response.json();
             }
