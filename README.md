@@ -1,6 +1,7 @@
 # anime-file-sort
+[![License](https://img.shields.io/github/license/andy19974a22/anime-file-sort.svg?style=flat-square)](/LICENSE)
 
-> A Vue.js project
+> 把檔案因應名稱, 分類到指定的文件夾。
 
 ## Build Setup
 
@@ -14,8 +15,11 @@ npm run dev
 # build for production with minification
 npm run build
 
-# build for production and view the bundle analyzer report
-npm run build --report
+# start the backend
+npm run server
 ```
 
-For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
+## use
+``` bash
+node server.js
+```
