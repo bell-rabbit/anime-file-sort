@@ -1,6 +1,8 @@
 const http = require("http");
 const sourcePathList = ["M:\\新番", "M:\\整理庫"];
 const fs = require('fs');
+const path = require('path');
+
 const querystring = require('querystring');
 
 function getFile(query) {
@@ -133,9 +135,17 @@ requestHandler = (request, response) => {
       if (fs.existsSync(".\\dist\\" + getPath)){
         json  = fs.readFileSync(".\\dist\\" + getPath, 'utf8');
       }
+
+      let extension = path.extname(getPath);
+      response.setHeader('Access-Control-Allow-Origin', '*');
+      switch (extension) {
+        case ".css":
+          response.writeHead(200, {"Content-Type": "text/css; charset=utf-8"});
+          break;
+        default:
+          response.writeHead(200, {"Content-Type": "text/html; charset=utf-8"});
+      }
   }
-  response.setHeader('Access-Control-Allow-Origin', '*');
-  response.writeHead(200, {"Content-Type": "text/html; charset=utf-8"});
   response.end(json);
 };
 

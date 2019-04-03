@@ -1,10 +1,8 @@
 <template>
-  <div id="app">
-    <v-app>
+  <v-app id="app">
       <app-nav :search.sync="searchText"></app-nav>
       <router-view :search-text.sync="searchText"/>
-    </v-app>
-  </div>
+  </v-app>
 </template>
 
 <script>
