@@ -11,7 +11,7 @@
     >
 <!--      <v-toolbar-side-icon></v-toolbar-side-icon>-->
 
-      <v-toolbar-title>List</v-toolbar-title>
+      <v-toolbar-title ><span @click='$router.push({path:"/"})'>List</span></v-toolbar-title>
       <v-spacer></v-spacer>
       <v-text-field
         v-model="text"
@@ -22,11 +22,20 @@
       ></v-text-field>
       <v-spacer></v-spacer>
 
-      <v-btn icon @click="openAddDialog()">
+      <v-btn v-if="mode === 'collectionMode'" icon @click='$router.push({path:"/"})'>
+        <v-icon>list</v-icon>
+      </v-btn>
+      <v-btn v-if="mode === 'collectionMode'" icon @click="refreshCollections()">
+        <v-icon>refresh</v-icon>
+      </v-btn>
+      <v-btn v-if="mode === 'listMode'"  icon @click="openCollections()">
+        <v-icon>collections</v-icon>
+      </v-btn>
+      <v-btn icon v-if="mode === 'listMode'" @click="openAddDialog()">
         <v-icon>add</v-icon>
       </v-btn>
 
-      <v-btn icon @click="run()">
+      <v-btn icon v-if="mode === 'listMode'"  @click="run()">
         <v-icon>play_arrow</v-icon>
       </v-btn>
 
@@ -98,7 +107,8 @@
       return {
         text:"",
         addDialog:false,
-        folderName:""
+        folderName:"",
+        mode:"listMode" //listMode || collectionMode
       }
     }, methods: {
       openAddDialog(){
@@ -130,9 +140,26 @@
       },
       keyup(){
         this.$emit('update:search', this.text)
+      },
+      refreshCollections(){
+          fetch(this.$g.hostName + "/refreshCollection").then(response => response.json()).
+          then((json)=> {
+              if(json.status === "success"){
+                  this.$g.loadCollection();
+              }else{
+                  alert("fail!");
+              }
+          });
+      },
+      updateMode(mode) {
+         this.mode = mode;
+      },
+      openCollections(){
+          this.$router.push({path:"/collection"});
       }
     }, beforeCreate() {
     }, created() {
+        this.$g.mode = this.updateMode;
     }, beforeMount() {
     }, mounted() {
     }, beforeUpdate() {

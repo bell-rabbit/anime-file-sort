@@ -100,6 +100,7 @@
 
         }, created() {
           let _this = this;
+          this.$g.mode('listMode');
           this.$g.load = function(){_this.load()};
           this.load();
         }, beforeMount() {

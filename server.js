@@ -1,5 +1,6 @@
 const http = require("http");
-const sourcePathList = ["M:\\新番", "M:\\整理庫"];
+const sourcePathList = ["M:\\新番", "M:\\整理庫","M:\\影片目錄庫"];
+const imagePathList = ["O:\\","\\\\192.168.10.10\\圖片庫"];
 const fs = require('fs');
 const path = require('path');
 const exec = require('child_process');
@@ -33,7 +34,7 @@ requestHandler = (request, response) => {
   let db = {};
 
   switch (url.split("?")[0]) {
-    case "/list":
+    case "/api/list":
       let extensionRegExp = RegExp(/\./);
       let tmpFileList = [];
       let dirList = [];
@@ -50,10 +51,87 @@ requestHandler = (request, response) => {
 
       json = JSON.stringify(dirList);
       break;
-    case "/get":
+    case "/api/getCollection":
+      json  = fs.readFileSync(".\\collectionDB.json",'utf8');
+      break;
+
+    case "/api/getCollectionImg":
+
+      let name = query.name;
+      for (let i = 0; i < imagePathList.length; i++) {
+        let data = imagePathList[i];
+
+        if(fs.existsSync(data + "\\" + name)){
+          let fileList = fs.readdirSync(data + "\\" + name);
+          if (fileList.length === 0){continue;}
+
+          let x = Math.floor((Math.random() * fileList.length));
+          console.log(fileList[x]);
+          console.log( x);
+          console.log(fileList.length);
+          switch (path.extname(fileList[x])) {
+            case ".jpg":
+              response.writeHead(200, {"Content-Type": "image/jpeg"});
+              break;
+            case ".png":
+              response.writeHead(200, {"Content-Type": "image/png"});
+              break;
+          }
+          response.end(fs.readFileSync(data + "\\" + name + "\\" +fileList[x]));
+        }
+      }
+      response.writeHead(200, {"Content-Type": "image/jpeg"});
+      response.end(fs.readFileSync(".\\no-image.jpg"));
+      break;
+    case "/api/refreshCollection":
+      console.log('/api/refreshCollection');
+      if (fs.existsSync(".\\collectionDB.json")){
+        let data = JSON.parse(fs.readFileSync(".\\collectionDB.json", 'utf8'));
+
+        for (let i = 0; i < data.length; i++) {
+          for (let j = 0; j < data[i].list.length; j++) {
+            let month = data[i].list[j];
+            for (let k = 0; k < month.list.length; k++) {
+              let anime = month.list[k].name;
+              let maxNumber = 0;
+              let fileList = [];
+              for (let i = 0; i < sourcePathList.length; i++) {
+                let data = sourcePathList[i];
+                let path = data + "\\" + anime + "\\";
+                console.log(month.list[k].season);
+                if(month.list[k].season){
+                  path += "\\" + month.list[k].season
+                }
+
+                if (fs.existsSync(path)) {
+                  fileList = [...new Set(fileList.concat(fs.readdirSync(path)))];
+                }
+              }
+              console.log(fileList);
+              let rollRegex = /\[[0-9][0-9]\]/;
+              for (let l = 0; l < fileList.length; l++) {
+                let myArray = rollRegex.exec(fileList[l]);
+
+                if(myArray){
+                  let number = parseInt(myArray[0].substring(1,myArray[0].length - 1));
+                  if (number > maxNumber ){
+                    maxNumber = number;
+                  }
+                }
+              }
+              month.list[k].roll = maxNumber;
+            }
+          }
+        }
+
+        fs.writeFileSync(".\\collectionDB.json", JSON.stringify(data), 'utf8');
+        json = JSON.stringify({"status":"success"});
+      }
+      break;
+    case "/api/get":
       json = getFile(query);
       break;
-    case "/add":
+    case "/api/add":
       if (query.name !== undefined && query.text !== undefined) {
         if (fs.existsSync(".\\db.json")){
           db = JSON.parse(fs.readFileSync(".\\db.json", 'utf8'));
@@ -68,7 +146,7 @@ requestHandler = (request, response) => {
       fs.writeFileSync('.\\db.json', JSON.stringify(db), 'utf8');
       json = getFile(query);
       break;
-    case "/remove":
+    case "/api/remove":
 
       if (query.name !== undefined && query.text !== undefined) {
         if (fs.existsSync(".\\db.json")){
@@ -85,7 +163,7 @@ requestHandler = (request, response) => {
     case "/build/build.js":
       json  = fs.readFileSync("./build/build.js",'utf8');
       break;
-    case "/add/folder":
+    case "/api/add/folder":
         if (query.name !== undefined){
           if (!fs.existsSync(sourcePathList[1] + "\\" + query.name)){
             fs.mkdirSync(sourcePathList[1] + "\\" + query.name);
@@ -93,7 +171,7 @@ requestHandler = (request, response) => {
         }
       json = JSON.stringify({"status":"success"});
       break;
-    case "/start":
+    case "/api/start":
       db = JSON.parse(fs.readFileSync(".\\db.json", 'utf8'));
 
       for (let sourcePath of sourcePathList) {
@@ -155,4 +233,4 @@ const server = http.createServer(requestHandler);
 server.listen(3000);
 console.log("start in " + "http://127.0.0.1:3000");
 
-exec.exec('start "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe" http://127.0.0.1:3000/');
+//exec.exec('start "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe" http://127.0.0.1:3000/');
