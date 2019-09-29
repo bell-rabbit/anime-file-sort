@@ -29,11 +29,11 @@
                 <v-flex xs2 v-for="(item4,index4) in item2.list" pa-1>
                   <v-img
                     :src="'./api/getCollectionImg?name=' + item4.name"
-                    height="200"
+                    height="160"
                     class="grey darken-4"
                   ></v-img>
 
-                  {{item4.name}} - <span v-if="item4.season">(第{{item4.season}}期) </span><span class="cyan--text">{{item4.roll}}</span>
+                  <span v-if="item4.roll === item4.end">🎈🎈</span>{{item4.name}} - <span v-if="item4.season">(第{{item4.season}}期) </span><span class="cyan--text">{{item4.roll}}</span><span v-if="item4.roll === item4.end">🎈🎈</span>
                 </v-flex>
               </v-layout>
             </v-container>

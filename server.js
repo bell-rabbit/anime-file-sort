@@ -76,6 +76,8 @@ requestHandler = (request, response) => {
             case ".png":
               response.writeHead(200, {"Content-Type": "image/png"});
               break;
+            default:
+              continue;
           }
           response.end(fs.readFileSync(data + "\\" + name + "\\" +fileList[x]));
         }
@@ -233,4 +235,4 @@ const server = http.createServer(requestHandler);
 server.listen(3000);
 console.log("start in " + "http://127.0.0.1:3000");
 
-//exec.exec('start "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe" http://127.0.0.1:3000/');
+exec.exec('start "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe" http://127.0.0.1:3000/');
