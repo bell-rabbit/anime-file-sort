@@ -66,9 +66,6 @@ requestHandler = (request, response) => {
           if (fileList.length === 0){continue;}
 
           let x = Math.floor((Math.random() * fileList.length));
-          console.log(fileList[x]);
-          console.log( x);
-          console.log(fileList.length);
           switch (path.extname(fileList[x])) {
             case ".jpg":
               response.writeHead(200, {"Content-Type": "image/jpeg"});
@@ -86,7 +83,7 @@ requestHandler = (request, response) => {
       response.end(fs.readFileSync(".\\no-image.jpg"));
       break;
     case "/api/refreshCollection":
-      console.log('/api/refreshCollection');
+
       if (fs.existsSync(".\\collectionDB.json")){
         let data = JSON.parse(fs.readFileSync(".\\collectionDB.json", 'utf8'));
 
@@ -100,7 +97,6 @@ requestHandler = (request, response) => {
               for (let i = 0; i < sourcePathList.length; i++) {
                 let data = sourcePathList[i];
                 let path = data + "\\" + anime + "\\";
-                console.log(month.list[k].season);
                 if(month.list[k].season){
                   path += "\\" + month.list[k].season
                 }
@@ -109,7 +105,6 @@ requestHandler = (request, response) => {
                   fileList = [...new Set(fileList.concat(fs.readdirSync(path)))];
                 }
               }
-              console.log(fileList);
               let rollRegex = /\[[0-9][0-9]\]/;
               for (let l = 0; l < fileList.length; l++) {
                 let myArray = rollRegex.exec(fileList[l]);
