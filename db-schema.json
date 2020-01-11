@@ -1,0 +1,82 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "definitions": {
+    "anime-item": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "roll": {
+          "type": "integer",
+          "default": 0
+        },
+        "end": {
+          "type": "integer"
+        },
+        "season": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "name",
+        "roll"
+      ]
+    },
+    "month-item": {
+      "type": "object",
+      "properties": {
+        "month": {
+          "type": "string"
+        },
+        "list": {
+          "type": "array",
+          "items": [
+            {
+              "$ref": "#/definitions/anime-item"
+            }
+          ],
+          "additionalItems": {
+            "$ref": "#/definitions/anime-item"
+          }
+        }
+      },
+      "required": [
+        "month",
+        "list"
+      ]
+    },
+    "year-item": {
+      "type": "object",
+      "properties": {
+        "year": {
+          "type": "string"
+        },
+        "list": {
+          "type": "array",
+          "items": [
+            {
+              "$ref": "#/definitions/month-item"
+            }
+          ],
+          "additionalItems": {
+            "$ref": "#/definitions/month-item"
+          }
+        }
+      },
+      "required": [
+        "year",
+        "list"
+      ]
+    }
+  },
+  "type": "array",
+  "items": [
+    {
+      "$ref": "#/definitions/year-item"
+    }
+  ],
+  "additionalItems": {
+    "$ref": "#/definitions/year-item"
+  }
+}
