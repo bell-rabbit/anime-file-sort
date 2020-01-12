@@ -32,6 +32,7 @@ requestHandler = (request, response) => {
   let json;
   let query = querystring.parse((request.url.split("?")[1]), null, null,);
   let db = {};
+  response.setHeader('Access-Control-Allow-Origin', 'http://localhost:8080');
 
   switch (url.split("?")[0]) {
     case "/api/list":
@@ -68,20 +69,24 @@ requestHandler = (request, response) => {
           let x = Math.floor((Math.random() * fileList.length));
           switch (path.extname(fileList[x])) {
             case ".jpg":
-              response.writeHead(200, {"Content-Type": "image/jpeg"});
+              response.setHeader("Content-Type", "image/jpeg");
+              response.status = 200;
               break;
             case ".png":
-              response.writeHead(200, {"Content-Type": "image/png"});
+              response.setHeader("Content-Type", "image/png");
+              response.status = 200;
               break;
             default:
               continue;
           }
           response.end(fs.readFileSync(data + "\\" + name + "\\" +fileList[x]));
+          return;
         }
       }
-      response.writeHead(200, {"Content-Type": "image/jpeg"});
+      response.setHeader("Content-Type", "image/jpeg");
+      response.status = 200;
       response.end(fs.readFileSync(".\\no-image.jpg"));
-      break;
+      return;
     case "/api/refreshCollection":
 
       if (fs.existsSync(".\\collectionDB.json")){
@@ -213,7 +218,6 @@ requestHandler = (request, response) => {
       }
 
       let extension = path.extname(getPath);
-      response.setHeader('Access-Control-Allow-Origin', '*');
       switch (extension) {
         case ".css":
           response.writeHead(200, {"Content-Type": "text/css; charset=utf-8"});
