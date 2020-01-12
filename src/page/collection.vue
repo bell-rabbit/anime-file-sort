@@ -34,6 +34,7 @@
                   ></v-img>
 
                   <span v-if="item4.roll === item4.end">🎈🎈</span>{{item4.name}} - <span v-if="item4.season">(第{{item4.season}}期) </span><span class="cyan--text">{{item4.roll}}</span><span v-if="item4.roll === item4.end">🎈🎈</span>
+                  <span v-if="item4.end && item4.roll !== item4.end"><br>End - <span class="purple--text">{{item4.end}}</span></span>
                 </v-flex>
               </v-layout>
             </v-container>
@@ -47,9 +48,11 @@
 <script>
     export default {
         name: "app-collection-page",
+       props: ['searchText'],
         data () {
             return {
-                list:[]
+              sourceList:[],
+              list:[]
             }
         },
         methods: {
@@ -60,11 +63,37 @@
                         return response.json();
                     }
                 ).then((json)=> {
-                    _this.list = json;
-                    //_this.list = ["",""];
-                    console.log(Object.keys(_this.list[0])[0]);
-                    //_this.filter();
+                    _this.sourceList = json;
+                    _this.filter();
                 });
+            },
+            filter(){
+              this.list = [];
+              for (let i = 0; i < this.sourceList.length; i++) {
+
+                let yearItems = this.sourceList[i];
+                let tmp = {year:yearItems.year,list:[]};
+
+                for (let j = 0; j < yearItems.list.length; j++) {
+                  let monthItems = yearItems.list[j];
+                  let listArray = [];
+
+                  for (let k = 0; k < monthItems.list.length; k++) {
+                    let item = monthItems.list[k];
+                    if (this.searchText === "" || item.name.includes(this.searchText)) {
+                      listArray.push(item)
+                    }
+                  }
+
+                  if(listArray.length > 0){
+                    tmp.list.push({month:monthItems.month,list:listArray})
+                  }
+                }
+
+                if(tmp.list.length > 0 ){
+                  this.list.push(tmp);
+                }
+              }
             },
             keyName(obj){
                return  Object.keys(obj)[0]
@@ -75,9 +104,11 @@
             this.$g.loadCollection = function(){_this.load()};
             this.load();
         },
+      watch:{
+        searchText(d){
+          this.filter();
+        }
+      }
     }
 </script>
 
-<style scoped>
-
-</style>

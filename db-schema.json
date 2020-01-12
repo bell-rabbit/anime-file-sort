@@ -27,7 +27,8 @@
       "type": "object",
       "properties": {
         "month": {
-          "type": "string"
+          "type": "string",
+          "enum": ["10","7","4","1"]
         },
         "list": {
           "type": "array",
