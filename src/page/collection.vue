@@ -26,7 +26,7 @@
           <div>
             <v-container fluid class="box">
               <v-layout  row wrap>
-                <v-flex xs2 v-for="(item4,index4) in item2.list" pa-1>
+                <v-flex xs4 lg2 v-for="(item4,index4) in item2.list" pa-1>
                   <v-img
                     :src="'./api/getCollectionImg?name=' + item4.name"
                     height="160"

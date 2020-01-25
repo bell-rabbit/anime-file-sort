@@ -146,6 +146,7 @@
           then((json)=> {
               if(json.status === "success"){
                   this.$g.loadCollection();
+                  alert("success");
               }else{
                   alert("fail!");
               }

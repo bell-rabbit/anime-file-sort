@@ -23,7 +23,7 @@
             <v-combobox
               v-model="condition"
               :items="itemsList"
-              label="Your favorite hobbies"
+              label="Your text to sorting"
               chips
               small-chips
               clearable
