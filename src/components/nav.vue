@@ -132,7 +132,7 @@
           fetch(this.$g.hostName + "/start").then(response => response.json()).
           then((json)=> {
             if(json.status === "success"){
-              alert("success!");
+              this.refreshCollections();
             }else{
                alert("fail!");
             }
