@@ -1,6 +1,6 @@
 const http = require("http");
 const sourcePathList = ["M:\\新番", "M:\\整理庫","M:\\影片目錄庫"];
-const imagePathList = ["O:\\","\\\\192.168.10.10\\圖片庫"];
+const imagePathList = ["O:\\","\\\\192.168.10.10\\圖片庫","U:\\"];
 const fs = require('fs');
 const path = require('path');
 const exec = require('child_process');
@@ -230,6 +230,28 @@ requestHandler = (request, response) => {
     case "/collection":
       json  = fs.readFileSync("./dist/index.html",'utf8');
         break;
+    case "/api/openImgFolder":
+      if (query.name === undefined) {
+        break;
+      }
+      let imgPath = [];
+      for (let string of imagePathList) {
+        if (fs.existsSync(string + "\\" + query.name)) {
+            imgPath.push(string + (string.lastIndexOf("\\") === string.length - 1?"":"\\") + query.name)
+        }
+      }
+      if(imgPath.length === 1){
+        exec.exec('%SystemRoot%\\explorer.exe \"' +imgPath[0] +"\"");
+        response.end();
+      }
+
+      if(query.index !== undefined && query.index !== "" ){
+        exec.exec('%SystemRoot%\\explorer.exe \"' +imgPath[query.index] +"\"");
+        response.end();
+      }
+
+      json = JSON.stringify(imgPath);
+      break;
     default:
       let getPath = url.split("?")[0];
       if (fs.existsSync(".\\dist\\" + getPath)){
