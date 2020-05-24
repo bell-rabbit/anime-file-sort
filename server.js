@@ -23,7 +23,7 @@ function getFile(query) {
     db = JSON.parse(fs.readFileSync(".\\db.json", 'utf8'));
   }
 
-  return JSON.stringify({"file": fileList, "condition": (db[query.name] || [])});
+  return JSON.stringify({"file": fileList, "condition": (db.text[query.name] || []),"season":(db.season[query.name] || "")});
 }
 
 
@@ -138,10 +138,10 @@ requestHandler = (request, response) => {
         if (fs.existsSync(".\\db.json")){
           db = JSON.parse(fs.readFileSync(".\\db.json", 'utf8'));
         }
-        if (db[query.name]){
-          db[query.name].push(query.text);
+        if (db.text[query.name]){
+          db.text[query.name].push(query.text);
         }else{
-          db[query.name]  = [query.text];
+          db.text[query.name]  = [query.text];
         }
       }
 
@@ -155,12 +155,22 @@ requestHandler = (request, response) => {
           db = JSON.parse(fs.readFileSync(".\\db.json", 'utf8'));
         }
 
-        if (db[query.name]){
-          db[query.name].splice( db[query.name].indexOf(query.text), 1 );
+        if (db.text[query.name]){
+          db.text[query.name].splice( db.text[query.name].indexOf(query.text), 1 );
         }
       }
       fs.writeFileSync('.\\db.json', JSON.stringify(db), 'utf8');
       json = getFile(query);
+      break;
+    case "/api/update":
+      if (query.name !== undefined && query.season !== undefined) {
+        if (fs.existsSync(".\\db.json")){
+          db = JSON.parse(fs.readFileSync(".\\db.json", 'utf8'));
+        }
+        db.season[query.name] = query.season;
+      }
+      fs.writeFileSync('.\\db.json', JSON.stringify(db), 'utf8');
+      json = getFile(query)
       break;
     case "/build/build.js":
       json  = fs.readFileSync("./build/build.js",'utf8');
@@ -182,13 +192,14 @@ requestHandler = (request, response) => {
 
         for (let file of fileList) {
           if (extensionRegExp.exec(file.toString())) {
-            for (let dbKey in db) {
-              if (!db.hasOwnProperty(dbKey)){
+            for (let dbKey in db.text) {
+              if (!db.text.hasOwnProperty(dbKey)){
                 continue;
               }
 
-              let stringList = db[dbKey];
+              let stringList = db.text[dbKey];
               for (let stringListKey in stringList) {
+                let season = "";
                 if (!stringList.hasOwnProperty(stringListKey)){
                   continue;
                 }
@@ -198,7 +209,14 @@ requestHandler = (request, response) => {
                     fs.mkdirSync(sourcePath + "\\" + dbKey);
                   }
 
-                  fs.renameSync(sourcePath + "\\" + file,sourcePath + "\\" + dbKey+ "\\" + file );
+                  if(db.season[dbKey]){
+                    season += "\\" + db.season[dbKey];
+                    if (!fs.existsSync(sourcePath + "\\" + dbKey + season )){
+                      fs.mkdirSync(sourcePath + "\\" + dbKey + season);
+                    }
+                  }
+
+                  fs.renameSync(sourcePath + "\\" + file,sourcePath + "\\" + dbKey+ season + "\\" + file );
                 }
               }
             }
