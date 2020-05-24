@@ -209,6 +209,7 @@ requestHandler = (request, response) => {
       }
       break;
     case "/":
+    case "/collection":
       json  = fs.readFileSync("./dist/index.html",'utf8');
         break;
     default:
